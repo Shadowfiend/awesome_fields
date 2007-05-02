@@ -1,0 +1,120 @@
+= Magic Fields
+Magic fields is a plugin that adds an extension to the built-in Rails
+FormBuilder in the form of a new method, <tt>FormBuilder#field</tt>. This method
+magically determines what type of field to display for the corresponding method.
+So let's say you had a model MyModel with a migration that looked oddly like:
+ create_table(:my_model) do |t|
+   t.column 'magic', :string
+   t.column 'number', :integer
+   t.column 'hyperdate', :date
+   t.column 'supertime', :time
+   t.column 'incredidatetime', :datetime
+ end
+
+Then let's say we did this bit of magic:
+ <% form_for :model, @model, :action => 'superplace' do |f| %>
+   <%= f.field :magic %>
+   <%= f.field :number %>
+   <%= f.field :hyperdate %>
+   <%= f.field :supertime %>
+   <%= f.field :incredidatetime %>
+ <% end %>
+In this situation, you would get two plain text boxes, one date selector, one
+time selector, and one datetime selector.
+
+What if the `magic' field was really long (i.e., we generated a column with type
+:text instead of :string)? Then we'd probably prefer a textarea. In this
+situation, we pass the <tt>:long</tt> option to the +field+ method:
+   <%= f.field :magic, :long => true %>
+Different field types may deal with this option differently, and some may ignore
+it entirely.
+
+== Field Generation
+There are two steps to generating the field: first, we determine what type of
+field to generate, then we generate the actual HTML for it.
+
+There are two ways we use to find the type of field to generate. First, we run
+the method itself and look for what the class of the object returned is. If we
+get a nil result from the method, then we use the actual database type as our
+determiner.
+
+To generate the actual HTML, we call a helper method. For example, if we had a
+string field, then we would call +string_field+. Since there are already methods
+for most fields, we simply alias the existing methods to the relevant ones.
+Sometimes, the mapping isn't one-to-one. For example, in the case of strings,
+sometimes we'll need to make the field a text area and other times just a simple
+text field (see the situation where we're using the <tt>:long</tt> option
+above). In these cases, we can implement the actual method and have it dispatch
+to the relevant helper methods.
+
+What if you want to specialize the behavior in one of your builders? Just
+override the relevant methods! Then there's the other situation -- one where
+maybe you've serialized an object to the database in YAML form, and you want to
+display a field for it. Since the returned value from the method will be of your
+class, we may be unable to resolve that class to an actual field type. In this
+case, you can either alias in your own helper or implement the relevant method
+in your own builder. The pattern of the methods called is simply the class name
+underscored (literally, the result of
+<tt>@object.send(method).class.underscore</tt>) followed by +_field+. So Strings
+go to +string_field+, Dates to +date_field+, and DateTimes to +date_time_field+.
+
+== Collection Fields
+Basic fields are all well and good, but it'd be nice to be able to automatically
+generate select boxes based on collection fields, too, and have them behave as
+expected. Magic fields makes this easier to a certain extent, as well. First of
+all, if a field returns a value that responds to the +collect+ method, then
+the field is assumed to be a collection field (an exception is made for Strings,
+which do respond to +collect+, but are handled as regular text fields).
+
+Then, we use +collection_select+ to generate the appropriate field (actually, we
+use +select+, because +collection_select+ doesn't allow us to easily indicate
+the multiple objects that should be preselected). By default, the +value_method+
+used to determine the value for the collection options is +id+. If a
++text_method+ is not specified, then the +name+ or +to_s+ methods are used (they
+are attempted in that order).
+
+For +select+, we also need an original collection -- basically, a list of all of
+the possible values -- to use with the list of selected values.  If the objects
+inside the collection are AR objects, then we take their class and issue a
+<tt>find(:all)</tt> on it. For example, with this call:
+
+ f.field :collection_method
+
+If +collection_method+ returned a list of Post objects, then we issue a
+<tt>Post::find(:all)</tt> to determine the full collection (of selected and
+unselected values). This guessing can be overridden by providing a collection to
+use instead by passing the <tt>:collection</tt> option with the relevant
+collection.
+
+You can override both the method used for display text and that used for the
+option value by passing the +text_method+ and +value_method+ options to the
++field+ helper. Further options and HTML options are passed on to
++select+, as usual.
+
+=== What About Collections of Non-ActiveRecord Objects?
+Unfortunately, this convenience comes at a slight price when it comes to
+collections of non-AR objects. If you want to use +field+ with its collection
+field magic and you've got, say, integers in the collection, then you'll have to
+do a bit of extra work and specify both the value and text methods, like so:
+
+ f.field :numbers, :value_method => :to_int, :text_method => :to_int
+
+In this case, since we're getting numbers out, we just use the +to_int+ method
+for both the value and the text.
+
+=== Notes
+Since Rails will typecast date and datetime fields to the Ruby +Time+ class,
+these typically won't be recognized appropriately. Currently, the +time_field+
+method is implemented to double-check with the database the type that needs to
+be used.  If you implement accessors for the relevant fields to return objects
+of the appropriate type (see http://www.railsweenie.com/forums/1/topics/936 for
+an example of how you could do this), then the appropriate methods will be
+called without the extra level of indirection. Sadly, this specialization means
+that any Time fields will always have their type checked twice.
+
+Also, the presence of <tt>FormBuilder#field</tt> does NOT in any way mean the
+other helpers are not available for use. If the decisions +field+ makes don't
+float your boat, feel free to put in a direct call to the regular helpers. The
+purpose of +field+ is to try and reduce the repetition (it's a already a string,
+why say it again?), not to get in your way. If it's getting in your way, you
+probably need a different solution.
