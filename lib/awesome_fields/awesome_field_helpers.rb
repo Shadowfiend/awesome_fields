@@ -1,8 +1,8 @@
-module MagicFields
-  # Contains the helpers used for the magic_fields plugin. The most relevant
-  # method is the +field+ method, which provides the meat of the functionality in
-  # magic_fields. Other helpers are present to aid the field method.
-  module MagicFieldHelpers
+module AwesomeFields
+  # Contains the helpers used for the awesome_fields plugin. The most relevant
+  # method is the +field+ method, which provides the meat of the functionality
+    # in awesome_fields. Other helpers are present to aid the field method.
+  module AwesomeFieldHelpers
     # Generates a field for the specified attribute. Uses first introspection
     # (gets the method value and asks it for its class) and then the database (if
     # the method returns nil) to determine which field helper to use. Note that
@@ -70,7 +70,7 @@ module MagicFields
     # The simplest way to call this method is just with a method name:
     #  f.collection_field(:my_field)
     # At this point, you give yourself entirely over to the guessing that
-    # +magic_fields+ does:
+    # +awesome_fields+ does:
     # * The value of the options will be that of the +id+ method called on each
     #   element in the collection.
     # * The text for those options will be that of the +name+ method or the

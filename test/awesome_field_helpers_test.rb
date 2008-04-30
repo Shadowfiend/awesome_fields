@@ -12,7 +12,7 @@ class TestController < ActionController::Base
   def rescue_action(e); raise e; end
 end
 
-context "magic_fields" do
+context "awesome_fields" do
   specify 'should add field method to FormBuilder' do
     fb = ActionView::Helpers::FormBuilder.new(nil,nil,nil,nil,nil)
     proc { fb.method(:field) } .should.not.raise NameError

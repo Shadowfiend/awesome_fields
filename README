@@ -1,5 +1,5 @@
-= Magic Fields
-Magic fields is a plugin that adds an extension to the built-in Rails
+= Awesome Fields
+Awesome fields is a plugin that adds an extension to the built-in Rails
 FormBuilder in the form of a new method, <tt>FormBuilder#field</tt>. This method
 magically determines what type of field to display for the corresponding method.
 So let's say you had a model MyModel with a migration that looked oddly like:
