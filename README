@@ -2,6 +2,13 @@
 Awesome fields is a plugin that adds an extension to the built-in Rails
 FormBuilder in the form of a new method, <tt>FormBuilder#field</tt>. This method
 magically determines what type of field to display for the corresponding method.
+It also adds a new form builder, +LinedBuilder+, and related methods, such as
+lined_form_for and lined_fields_for. Note that JS-related methods are not
+provided, since generally speaking I don't think Rails's JS helpers should be
+used (look into a library like LowPro instead).
+
+== Overview of the +field+ method
+
 So let's say you had a model MyModel with a migration that looked oddly like:
  create_table(:my_model) do |t|
    t.column 'magic', :string
@@ -29,7 +36,55 @@ situation, we pass the <tt>:long</tt> option to the +field+ method:
 Different field types may deal with this option differently, and some may ignore
 it entirely.
 
-== Field Generation
+
+== Overview of the +LinedBuilder+
+
++LinedBuilder+ is a Rails form builder that adds support for labels and pretty
+error handling to forms. +LinedBuilder+ wraps each input element created by a
+call to a field helper in a div of CSS class +form_line+. It also gives it a
+label (by default, this contains the humanized name of the field) and, if an
+error exists, it provides a nested div within the +form_line+ of CSS class
++field_error+ and the div's class is changed to +form_line_with_errors+. More
+details are below.
+
+A short example now. Assume there are three fields for a model -- `number',
+`date', and `name'. `name' is blank but should not be, and so has an error on
+it. The ERB code:
+
+<% lined_form_for @model do |f| %>
+  <%= f.field :name %>
+  <%= f.text_field :number %>
+  <%= f.field :date %>
+<% end %>
+
+Will yield the HTML output:
+
+<form ...>
+    <div class="form_line_with_errors">
+        <div class="field_error">Name should not be blank.</div>
+        <label for="model_name">Name:</label>
+        <input type="text" name="model[name]" id="model_name" value="" />
+    </div>
+    <div class="form_line">
+        <label for="model_number">Number:</label>
+        <input type="text" name="model[number]" id="model_number" />
+    </div>
+    <div class="form_line">
+        <label for="model_date">Date:</label>
+        <!-- A date selector. -->
+    </div>
+</form>
+
+See the section on +LinedBuilder+ below for more details.
+
+== The +field+ Method
+
+The field method automatically takes care of generating a field of the
+appropriate type for you in a form. It even takes care of a lot of the magic of
+collection fields. Some details on the inner workings follow. See also the
+documentation for the +AwesomeFieldHelpers+ for more information.
+
+=== Field Generation
 There are two steps to generating the field: first, we determine what type of
 field to generate, then we generate the actual HTML for it.
 
@@ -118,3 +173,13 @@ float your boat, feel free to put in a direct call to the regular helpers. The
 purpose of +field+ is to try and reduce the repetition (it's a already a string,
 why say it again?), not to get in your way. If it's getting in your way, you
 probably need a different solution.
+
+== The +LinedBuilder+ Class
+
++LinedBuilder+ is meant to take the pain out of creating forms whose fields fit
+on multiple lines and whose fields have labels and correlated errors. By
+default, Rails's +FormBuilder+ doesn't do this. This builder provides those
+capabilities transparently.
+
+Because this builder is a self-contained class, the detailed documentation for
+it is in the <tt>AwesomeFields::LinedBuilder</tt> documentation. Go get it!
