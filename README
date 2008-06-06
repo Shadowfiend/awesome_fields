@@ -51,15 +51,15 @@ A short example now. Assume there are three fields for a model -- `number',
 `date', and `name'. `name' is blank but should not be, and so has an error on
 it. The ERB code:
 
-<% lined_form_for @model do |f| %>
-  <%= f.field :name %>
-  <%= f.text_field :number %>
-  <%= f.field :date %>
-<% end %>
+ <% lined_form_for @model do |f| %>
+   <%= f.field :name %>
+   <%= f.text_field :number %>
+   <%= f.field :date %>
+ <% end %>
 
 Will yield the HTML output:
 
-<form ...>
+ <form ...>
     <div class="form_line_with_errors">
         <div class="field_error">Name should not be blank.</div>
         <label for="model_name">Name:</label>
@@ -73,7 +73,7 @@ Will yield the HTML output:
         <label for="model_date">Date:</label>
         <!-- A date selector. -->
     </div>
-</form>
+ </form>
 
 See the section on +LinedBuilder+ below for more details.
 

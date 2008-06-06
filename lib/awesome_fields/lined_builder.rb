@@ -53,7 +53,7 @@ module AwesomeFields
   #    <input type="text" id="model_field" name="model[field]" value="" />
   #  </div>
   #
-  #  And one with no errors and no label has structure:
+  # And one with no errors and no label has structure:
   #
   #  <div class="form_line">
   #    <input type="text" id="model_field" name="model[field]" value="" />
