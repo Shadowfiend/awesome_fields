@@ -183,3 +183,8 @@ capabilities transparently.
 
 Because this builder is a self-contained class, the detailed documentation for
 it is in the <tt>AwesomeFields::LinedBuilder</tt> documentation. Go get it!
+
+== License and Such
+
++awesome_fields+ is Copyright (c) 2008 Antonio Salazar Cardozo, released under
+the MIT license.
