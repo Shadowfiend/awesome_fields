@@ -181,3 +181,4 @@ module AwesomeFields
         :class => 'field_error'
     end
   end
+end
