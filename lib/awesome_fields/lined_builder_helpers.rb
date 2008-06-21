@@ -5,20 +5,20 @@ module AwesomeFields
   module LinedBuilderHelpers
     # Behaves exactly the same as +form_for+, but ensures that the resulting
     # builder object will be a +LinedBuilder+.
-    def lined_form_for(*args)
+    def lined_form_for(*args, &block)
       opts = args.last.is_a?(Hash) ? args.pop : {}
       opts[:builder] = LinedBuilder
       args << opts
-      form_for(*args) { |f| yield f }
+      form_for(*args, &block)
     end
 
     # Behaves exactly the same as +fields_for+ but ensures that the resulting
     # builder object will be a +LinedBuilder+.
-    def lined_fields_for(*args)
+    def lined_fields_for(*args, &block)
       opts = args.last.is_a?(Hash) ? args.pop : {}
       opts[:builder] = LinedBuilder
       args << opts
-      fields_for(*args) { |f| yield f }
+      fields_for(*args, &block)
     end
   end
 end
