@@ -71,8 +71,8 @@ module AwesomeFields
     #  f.collection_field(:my_field)
     # At this point, you give yourself entirely over to the guessing that
     # +awesome_fields+ does:
-    # * The value of the options will be that of the +id+ method called on each
-    #   element in the collection.
+    # * The value of the options will be that of the +to_param+ method called
+    #   on each element in the collection.
     # * The text for those options will be that of the +name+ method or the
     #   +to_s+ method, depending on whether the +name+ method exists or not.
     # * The full list of possible options will be derived by calling
