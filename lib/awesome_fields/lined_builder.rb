@@ -18,13 +18,23 @@ module AwesomeFields
   #
   # When producing a field, the field is wrapped with a div whose CSS class is
   # +form_line+. If the field has errors, that class is instead
-  # +form_line_with_errors+. This div is, obviously, a block-level element by
+  # <tt>form_line with_errors</tt>. This div is, obviously, a block-level element by
   # default, but can be floated or what have you if needed.
   #
   # == Errors
   #
   # As mentioned above, if the field has an error, the wrapping div is given the
-  # +form_line_with_errors+ CSS class instead of the regular +form_line+ class.
+  # <tt>form_line with_errors</tt> CSS class instead of the regular +form_line+ class.
+  # Recommended CSS looks something like:
+  #
+  #   form div.form_line {
+  #     ... font, padding, margin, etc.
+  #   }
+  #
+  #   form div.form_line.with_errors {
+  #     color: red;   <!-- additional formatting for error fields -->
+  #   }
+  #
   # Additionally, the error text is placed within the containing +form_line+ div
   # within its own div, whose class is +field_error+.
   #
@@ -39,7 +49,7 @@ module AwesomeFields
   #
   # The resulting structure of a field with errors is:
   #
-  #  <div class="form_line_with_errors">
+  #  <div class="form_line with_errors">
   #    <div class="field_error">Field should not be blank.</div>
   #
   #    <label for="model_field">Field:</label>
@@ -127,7 +137,7 @@ module AwesomeFields
       @template.content_tag( 'div',
         (err ? err : '') + label_tag( label, options ) +
           super,
-        :class => err ? 'form_line_with_errors' : 'form_line' )
+        :class => err ? 'form_line with_errors' : 'form_line' )
     end
 
     # Produces a submit button wrapped in a div of class +form_buttons+. The
@@ -151,7 +161,7 @@ module AwesomeFields
 
       @template.content_tag 'div',
         (err ? err : '') + label_tag(attr, options) + content_gen.call + after,
-        :class => (err ? 'form_line_with_errors' : 'form_line')
+        :class => (err ? 'form_line with_errors' : 'form_line')
     end
 
     # Produces the appropriate label tag for the given attribute, including

@@ -44,8 +44,8 @@ error handling to forms. +LinedBuilder+ wraps each input element created by a
 call to a field helper in a div of CSS class +form_line+. It also gives it a
 label (by default, this contains the humanized name of the field) and, if an
 error exists, it provides a nested div within the +form_line+ of CSS class
-+field_error+ and the div's class is changed to +form_line_with_errors+. More
-details are below.
++field_error+ and the div's class is changed to
+<tt>form_line with_errors</tt>. More details are below.
 
 A short example now. Assume there are three fields for a model -- `number',
 `date', and `name'. `name' is blank but should not be, and so has an error on
@@ -60,7 +60,7 @@ it. The ERB code:
 Will yield the HTML output:
 
  <form ...>
-    <div class="form_line_with_errors">
+    <div class="form_line with_errors">
         <div class="field_error">Name should not be blank.</div>
         <label for="model_name">Name:</label>
         <input type="text" name="model[name]" id="model_name" value="" />
