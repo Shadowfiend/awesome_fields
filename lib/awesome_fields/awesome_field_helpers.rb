@@ -100,7 +100,7 @@ module AwesomeFields
       reference_object = opts[:collection] ? opts[:collection].first \
                                            : selected.first
 
-      value_meth = opts[:value_method] || :id
+      value_meth = opts[:value_method] || :to_param
       text_meth =  opts[:text_method]  || text_method_for(reference_object)
       collection = opts[:collection]   || reference_object.class.find(:all)
 
