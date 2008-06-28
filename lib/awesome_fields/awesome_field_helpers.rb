@@ -134,9 +134,10 @@ module AwesomeFields
     # Sets up aliases for use by +field+.
     def self.included(mod)
       mod.class_eval do
-        alias :integer_field   :text_field
-        alias :fixnum_field    :text_field
-        alias :nil_class_field :text_field
+        alias :integer_field   :string_field
+        alias :fixnum_field    :string_field
+        alias :nil_class_field :string_field
+        alias :decimal_field   :string_field
       end
     end
 
