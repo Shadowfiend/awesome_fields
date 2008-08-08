@@ -138,6 +138,8 @@ module AwesomeFields
         alias :fixnum_field    :string_field
         alias :nil_class_field :string_field
         alias :decimal_field   :string_field
+        alias :date_field      :date_select
+        alias :datetime_field  :datetime_select
       end
     end
 

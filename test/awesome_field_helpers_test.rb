@@ -157,6 +157,32 @@ context "awesome_fields" do
       page.should.select "select#?", /^model_attribute_[4-6]i$/, 2
       page.should.select "select#?", /^model_attribute_[^4-6]i$/, 0
     end
+
+    specify 'date fields should return date selects' do
+      object = stub(:attribute => nil)
+      object.expects(:column_for_attribute).with(:attribute) \
+        .returns(stub(:type => :date)).at_most(2)
+      body = in_builder_for object do
+        "<%= builder.field(:attribute) %>"
+      end
+
+      body.should.be.not.empty
+      page.should.select "select#?", /^model_attribute_[1-3]i$/, 3
+      page.should.select "select#?", /^model_attribute_[^1-3]i$/, 0
+    end
+
+    specify 'datetime fields should return datetime selects' do
+      object = stub(:attribute => nil)
+      object.expects(:column_for_attribute).with(:attribute) \
+        .returns(stub(:type => :datetime)).at_most(2)
+      body = in_builder_for object do
+        "<%= builder.field(:attribute) %>"
+      end
+
+      body.should.be.not.empty
+      page.should.select "select#?", /^model_attribute_[1-6]i$/, 5
+      page.should.select "select#?", /^model_attribute_[^1-6]i$/, 0
+    end
   end
 
   context 'collection helpers' do
