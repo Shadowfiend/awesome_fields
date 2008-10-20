@@ -116,7 +116,7 @@ go to +string_field+, Dates to +date_field+, and DateTimes to +date_time_field+.
 == Collection Fields
 Basic fields are all well and good, but it'd be nice to be able to automatically
 generate select boxes based on collection fields, too, and have them behave as
-expected. Magic fields makes this easier to a certain extent, as well. First of
+expected. Awesome fields makes this easier to a certain extent, as well. First of
 all, if a field returns a value that responds to the +collect+ method, then
 the field is assumed to be a collection field (an exception is made for Strings,
 which do respond to +collect+, but are handled as regular text fields).
