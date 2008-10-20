@@ -135,11 +135,16 @@ inside the collection are AR objects, then we take their class and issue a
 
  f.field :collection_method
 
-If +collection_method+ returned a list of Post objects, then we issue a
-<tt>Post::find(:all)</tt> to determine the full collection (of selected and
-unselected values). This guessing can be overridden by providing a collection to
-use instead by passing the <tt>:collection</tt> option with the relevant
-collection.
+If +collection_method+ returned a list of Post objects (or a single Post
+object), then we issue a <tt>Post::find(:all)</tt> to determine the full
+collection (of selected and unselected values). This guessing can be overridden
+by passing the <tt>:collection</tt> option with the desired collection.
+
+Note also that the set of selected items (or the single selected item) can be
+overridden by providing a collection or object to use instead through the
+<tt>:selected</tt> option. If <tt>:collection</tt> is not provided, the class of
+this object or of the first item in the list will be used to run the find
+metnioned above.
 
 You can override both the method used for display text and that used for the
 option value by passing the +text_method+ and +value_method+ options to the

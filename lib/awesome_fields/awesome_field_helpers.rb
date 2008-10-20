@@ -1,7 +1,7 @@
 module AwesomeFields
   # Contains the helpers used for the awesome_fields plugin. The most relevant
   # method is the +field+ method, which provides the meat of the functionality
-    # in awesome_fields. Other helpers are present to aid the field method.
+  # in awesome_fields. Other helpers are present to aid the field method.
   module AwesomeFieldHelpers
     # Generates a field for the specified attribute. Uses first introspection
     # (gets the method value and asks it for its class) and then the database (if
@@ -77,6 +77,8 @@ module AwesomeFields
     #   +to_s+ method, depending on whether the +name+ method exists or not.
     # * The full list of possible options will be derived by calling
     #   <tt>find(:all)</tt> on the class of the first object of the collection.
+    # * The list of selected options (or the one selected option) will be
+    #   derived by calling +method+ on the form object.
     #
     # This is based on a few larger assumptions:
     # * The collection is homogeneous (i.e., all objects are of the same class).
@@ -92,10 +94,13 @@ module AwesomeFields
     # <tt>:collection</tt>:: A collection to use instead of calling
     #                        <tt>find(:all)</tt> on the class of the first
     #                        element of the selected values.
+    # <tt>:selected</tt>:: A collection to use instead of calling +method+ on
+    #                      the form object to find the selected item or items in
+    #                      the list.
     #
     # Other options are passed on to the +select+ method.
     def collection_field(method, opts = {}, html_options = {})
-      selected = @object.send(method)
+      selected = opts[:selected] || @object.send(method)
       selected = [ selected ] if ! selected.respond_to?(:first)
       reference_object = opts[:collection] ? opts[:collection].first \
                                            : selected.first
