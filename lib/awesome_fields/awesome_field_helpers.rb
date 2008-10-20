@@ -77,6 +77,9 @@ module AwesomeFields
     #   +to_s+ method, depending on whether the +name+ method exists or not.
     # * The full list of possible options will be derived by calling
     #   <tt>find(:all)</tt> on the class of the first object of the collection.
+    #   If there is no object in the collection, then an attempt will be made to
+    #   find out the right class to call +find+ on by attempting to reflect on
+    #   the association represented by the method name (if any)
     # * The list of selected options (or the one selected option) will be
     #   derived by calling +method+ on the form object.
     #
@@ -104,10 +107,12 @@ module AwesomeFields
       selected = [ selected ] if ! selected.respond_to?(:first)
       reference_object = opts[:collection] ? opts[:collection].first \
                                            : selected.first
+      reference_class = (reference_object && reference_object.class) ||
+                        @object.class.reflect_on_association(method).klass
 
       value_meth = opts[:value_method] || :to_param
       text_meth =  opts[:text_method]  || text_method_for(reference_object)
-      collection = opts[:collection]   || reference_object.class.find(:all)
+      collection = opts[:collection]   || reference_class.find(:all)
 
       all_values = collection.collect do |item|
         [ item.send(text_meth), item.send(value_meth) ]

@@ -131,14 +131,19 @@ are attempted in that order).
 For +select+, we also need an original collection -- basically, a list of all of
 the possible values -- to use with the list of selected values.  If the objects
 inside the collection are AR objects, then we take their class and issue a
-<tt>find(:all)</tt> on it. For example, with this call:
+<tt>find(:all)</tt> on it. If there are no available objects, then we attempt to
+reflect on the association for the given method to determine the right class.
+For example, with this call:
 
  f.field :collection_method
 
 If +collection_method+ returned a list of Post objects (or a single Post
 object), then we issue a <tt>Post::find(:all)</tt> to determine the full
-collection (of selected and unselected values). This guessing can be overridden
-by passing the <tt>:collection</tt> option with the desired collection.
+collection (of selected and unselected values). If an empty list is returned, or
+nil, then we look up the association for the object on +collection_method+ and
+try to invoke a <tt>find(:all)</tt> on that class. This guessing can be
+overridden by passing the <tt>:collection</tt> option with the desired
+collection.
 
 Note also that the set of selected items (or the single selected item) can be
 overridden by providing a collection or object to use instead through the
