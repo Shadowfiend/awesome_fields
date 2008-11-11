@@ -79,9 +79,20 @@ module AwesomeFields
     #   <tt>find(:all)</tt> on the class of the first object of the collection.
     #   If there is no object in the collection, then an attempt will be made to
     #   find out the right class to call +find+ on by attempting to reflect on
-    #   the association represented by the method name (if any)
+    #   the association represented by the method name (if any).
     # * The list of selected options (or the one selected option) will be
     #   derived by calling +method+ on the form object.
+    # * If there is an association on the given method, then it will be
+    #   reflected on to determine if the :multiple option should be set (so that
+    #   multiple items may be selected in the select box).
+    # * Finally, if the method corresponds to an association, the method name
+    #   will be changed to either method_ids or method_id as long as the
+    #   value_method is unchanged. Since to_param will give the value, this can
+    #   be assigned directly into an id list without any additional handling.
+    #   This allows us to mark the field as an id field and allow Rails to take
+    #   care of the assignment by just passing the params in server-side. If you
+    #   want to disable this behavior, just pass a :value_method parameter in
+    #   (even if it's still :to_param).
     #
     # This is based on a few larger assumptions:
     # * The collection is homogeneous (i.e., all objects are of the same class).
@@ -103,23 +114,40 @@ module AwesomeFields
     #
     # Other options are passed on to the +select+ method.
     def collection_field(method, opts = {}, html_options = {})
+      assoc = @object.class.reflect_on_association(method)
+
       selected = opts[:selected] || @object.send(method)
       selected = [ selected ] if ! selected.respond_to?(:first)
-      reference_object = opts[:collection] ? opts[:collection].first \
-                                           : selected.first
-      reference_class = (reference_object && reference_object.class) ||
-                        @object.class.reflect_on_association(method).klass
+      ref_obj  = opts[:collection] ? opts[:collection].first : selected.first
+      ref_class = (ref_obj && ref_obj.class) || (assoc && assoc.klass)
 
       value_meth = opts[:value_method] || :to_param
-      text_meth =  opts[:text_method]  || text_method_for(reference_object)
-      collection = opts[:collection]   || reference_class.find(:all)
+      text_meth  = opts[:text_method]  || text_method_for(reference_object)
+      collection = opts[:collection]   || ref_class ? ref_class.find(:all) : []
+      multiple   = opts[:multiple]
+
+      # Below, we switch multiple on if we have a *_many relationship on this
+      # method and it hasn't already been set. We also switch the method to be
+      # either method_ids or method_id, depending on the association. This lets
+      # the assignment happen correctly once the form data returns to the
+      # controller, thus eliminating the need for special handling.
+      if assoc
+        if assoc.macro.to_s =~ /_many$/
+          multiple = true unless multiple.nil?
+
+          method = "#{method.to_s.singularize}_ids" unless opts[:value_method]
+        elsif assoc.macro.to_s == 'belongs_to'
+          method = "#{method.to_s}_id" unless opts[:value_method]
+        end
+      end
 
       all_values = collection.collect do |item|
         [ item.send(text_meth), item.send(value_meth) ]
       end
-      selected_values = selected.collect { |item| item.send(value_meth) }
+      selected_vals = selected.collect { |item| item.send(value_meth) }
 
-      self.select(method, all_values, opts.merge(:selected => selected_values),
+      self.select(method, all_values,
+                  opts.merge(:selected => selected_vals, :multiple => multiple),
                   html_options)
     end
 
