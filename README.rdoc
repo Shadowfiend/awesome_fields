@@ -124,7 +124,7 @@ which do respond to +collect+, but are handled as regular text fields).
 Then, we use +collection_select+ to generate the appropriate field (actually, we
 use +select+, because +collection_select+ doesn't allow us to easily indicate
 the multiple objects that should be preselected). By default, the +value_method+
-used to determine the value for the collection options is +id+. If a
+used to determine the value for the collection options is +to_param+. If a
 +text_method+ is not specified, then the +name+ or +to_s+ methods are used (they
 are attempted in that order).
 
