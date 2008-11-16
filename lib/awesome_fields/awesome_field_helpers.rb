@@ -224,8 +224,8 @@ module AwesomeFields
       def html_and_other_options_from(args)
         opts, html_opts = {}, {}
 
-        opts = args.pop if args.last.is_a?(Hash)
-        html_opts = opts and opts = args.pop if args.last.is_a?(Hash)
+        opts = args[-1] if args[-1].is_a?(Hash)
+        html_opts = opts and opts = args[-2] if args[-1].is_a?(Hash)
 
         return opts, html_opts
       end
